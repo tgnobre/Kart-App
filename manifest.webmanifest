@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Mistura 2T",
-  "short_name": "Mistura 2T",
+  "name": "Kart App",
+  "short_name": "Kart App",
   "description": "Calculadora offline de gasolina e óleo 2T",
   "lang": "pt-PT",
   "start_url": "./",

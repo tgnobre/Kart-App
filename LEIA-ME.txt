@@ -1,4 +1,4 @@
-MISTURA 2T — APP WEB INSTALÁVEL (VERSÃO 1.1)
+KART APP — APP WEB INSTALÁVEL (VERSÃO 1.1)
 
 Conteúdo:
 - index.html: aplicação

@@ -7,7 +7,7 @@
   <meta name="description" content="Calculadora offline de mistura de gasolina e óleo 2T.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <title>Mistura 2T</title>
+  <title>Kart App</title>
   <style>
     :root { color-scheme: light; --blue:#075fc8; --blue2:#0a78e8; --ink:#172438; --muted:#64748b; --bg:#f2f6fb; --card:#fff; --line:#dbe5f0; --green:#e7f8ed; }
     * { box-sizing:border-box; }
@@ -54,7 +54,7 @@
 <body>
 <header>
   <div class="eyebrow">CALCULADORA DE MISTURA</div>
-  <h1>🛢️ Mistura 2T</h1>
+  <h1>🏁 Kart App</h1>
   <p>Calcula quanto óleo adicionar à gasolina.</p>
 </header>
 <main>
@@ -154,7 +154,7 @@
     </section>
   </div>
 </main>
-<footer>Mistura 2T · versão 1.1 · funciona no dispositivo</footer>
+<footer>Kart App · versão 1.2 · funciona no dispositivo</footer>
 <script>
   const fuel = document.getElementById('fuel');
   const percent = document.getElementById('percent');
@@ -243,11 +243,15 @@
     document.getElementById('wheelB').textContent = fmt(b.wheelRpm) + ' RPM';
     document.getElementById('speedA').textContent = fmt(a.speed) + ' km/h';
     document.getElementById('speedB').textContent = fmt(b.speed) + ' km/h';
-    const diff = b.speed - a.speed;
-    const pct = (diff / a.speed) * 100;
-    const faster = Math.abs(diff) < 0.01 ? 'As duas transmissões dão praticamente a mesma velocidade teórica.' :
-      `A transmissão ${diff > 0 ? 'B' : 'A'} dá ${fmt(Math.abs(diff))} km/h ${diff > 0 ? 'mais' : 'menos'} (${fmt(Math.abs(pct))}%) à mesma rotação do motor.`;
-    summaryEl.textContent = faster;
+    const diff = a.speed - b.speed;
+    const pct = Math.abs(diff) / Math.min(a.speed, b.speed) * 100;
+    if (Math.abs(diff) < 0.01) {
+      summaryEl.textContent = 'As duas transmissões dão praticamente a mesma velocidade teórica.';
+    } else {
+      const faster = diff > 0 ? 'A' : 'B';
+      const slower = diff > 0 ? 'B' : 'A';
+      summaryEl.textContent = `A transmissão ${faster} permite uma velocidade ${fmt(Math.abs(diff))} km/h superior à transmissão ${slower} (${fmt(pct)}% relativamente à mais curta), à mesma rotação do motor.`;
+    }
   }
   calcGears();
 
