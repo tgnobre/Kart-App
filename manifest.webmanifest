@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "Mistura 2T",
+  "short_name": "Mistura 2T",
+  "description": "Calculadora offline de gasolina e óleo 2T",
+  "lang": "pt-PT",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f2f6fb",
+  "theme_color": "#075fc8",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}

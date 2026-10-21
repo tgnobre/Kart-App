@@ -1,0 +1,22 @@
+MISTURA 2T — APP WEB INSTALÁVEL (VERSÃO 1.1)
+
+Conteúdo:
+- index.html: aplicação
+- manifest.webmanifest: informação de instalação
+- sw.js: cache para funcionamento offline
+- icon.svg: ícone
+- Separador Transmissões: calcula RPM da roda e velocidade teórica para duas relações, com diâmetro do pneu.
+
+INSTALAR NO ANDROID SEM PLAY STORE
+1. A aplicação tem de estar publicada num endereço HTTPS. Um método gratuito é GitHub Pages.
+2. Cria/inicia sessão numa conta GitHub e cria um repositório público chamado mistura-2t.
+3. Carrega os quatro ficheiros para a raiz do repositório.
+4. Em Settings > Pages, ativa a publicação a partir da branch main e pasta /(root).
+5. Abre o endereço HTTPS gerado no Chrome do Android.
+6. No menu ⋮, escolhe "Instalar aplicação" ou "Adicionar ao ecrã inicial".
+7. Abre a app uma vez com Internet; depois de o cache estar guardado, a calculadora funciona offline.
+
+NOTAS
+- Não é um APK nativo; é uma Progressive Web App (PWA), que abre como uma app e não exige Play Store.
+- A publicação pública só expõe estes ficheiros estáticos, sem dados pessoais.
+- O cálculo usa óleo como percentagem do volume de gasolina: 2 L a 2,5% = 50 ml.

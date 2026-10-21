@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#075fc8">
+  <meta name="description" content="Calculadora offline de mistura de gasolina e óleo 2T.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <title>Mistura 2T</title>
+  <style>
+    :root { color-scheme: light; --blue:#075fc8; --blue2:#0a78e8; --ink:#172438; --muted:#64748b; --bg:#f2f6fb; --card:#fff; --line:#dbe5f0; --green:#e7f8ed; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+    header { background:linear-gradient(135deg,var(--blue),var(--blue2)); color:white; padding:24px 20px 28px; border-radius:0 0 24px 24px; }
+    header .eyebrow { opacity:.85; font-size:.85rem; }
+    h1 { margin:4px 0; font-size:1.8rem; }
+    header p { margin:6px 0 0; opacity:.92; }
+    main { width:min(680px,100%); margin:0 auto; padding:16px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px; box-shadow:0 4px 18px #18365b0b; }
+    label { display:block; font-weight:650; margin:0 0 8px; }
+    .field { display:flex; align-items:center; border:1px solid #bdcddd; border-radius:12px; overflow:hidden; background:white; }
+    input, select { font:inherit; color:var(--ink); border:0; outline:none; background:transparent; padding:13px 12px; min-width:0; width:100%; }
+    .suffix { padding:0 13px; color:var(--muted); white-space:nowrap; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .result { background:var(--green); border:1px solid #b6e7c5; border-radius:16px; padding:18px; margin-top:16px; }
+    .result small { color:#256342; font-weight:700; }
+    .answer { font-size:2.35rem; font-weight:800; letter-spacing:-.04em; color:#145b31; line-height:1.2; margin:4px 0 8px; overflow-wrap:anywhere; }
+    .detail { color:#285b3b; font-size:.94rem; }
+    button { font:inherit; border:0; border-radius:12px; padding:13px 16px; font-weight:700; cursor:pointer; }
+    .primary { background:var(--blue); color:white; width:100%; margin-top:15px; }
+    .secondary { background:#eaf2fc; color:#084d9c; }
+    .presets { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .presets button { padding:9px 12px; }
+    h2 { font-size:1.08rem; margin:0 0 12px; }
+    table { width:100%; border-collapse:collapse; font-size:.92rem; }
+    th,td { text-align:right; padding:10px 7px; border-bottom:1px solid var(--line); }
+    th:first-child,td:first-child { text-align:left; }
+    th { color:var(--muted); font-weight:650; }
+    .note { color:var(--muted); font-size:.84rem; line-height:1.45; }
+    .tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+    .tab { background:#e4edf8; color:#31506f; }
+    .tab.active { background:var(--blue); color:white; }
+    .panel[hidden] { display:none; }
+    .comparison { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; }
+    .comparebox { background:#eef5ff; border:1px solid #d2e3f7; padding:14px; border-radius:14px; min-width:0; }
+    .comparebox strong { display:block; color:#164f92; margin-bottom:5px; }
+    .big-number { font-size:1.45rem; font-weight:800; overflow-wrap:anywhere; }
+    .delta { margin-top:12px; padding:12px; border-radius:12px; background:#f1f5f9; }
+    footer { text-align:center; color:var(--muted); font-size:.8rem; padding:4px 16px 28px; }
+    @media(max-width:390px) { .grid { grid-template-columns:1fr; gap:12px; } .answer {font-size:2.05rem;} }
+  </style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">CALCULADORA DE MISTURA</div>
+  <h1>🛢️ Mistura 2T</h1>
+  <p>Calcula quanto óleo adicionar à gasolina.</p>
+</header>
+<main>
+  <div class="tabs" role="tablist" aria-label="Ferramentas">
+    <button class="tab active" id="tab-mix" role="tab" aria-selected="true" aria-controls="panel-mix">Mistura 2T</button>
+    <button class="tab" id="tab-gears" role="tab" aria-selected="false" aria-controls="panel-gears">Transmissões</button>
+  </div>
+  <div id="panel-mix" class="panel" role="tabpanel" aria-labelledby="tab-mix">
+  <section class="card" aria-label="Calculadora">
+    <div class="grid">
+      <div>
+        <label for="fuel">Gasolina</label>
+        <div class="field"><input id="fuel" type="number" min="0" step="any" value="2" inputmode="decimal"><span class="suffix">litros</span></div>
+      </div>
+      <div>
+        <label for="percent">Óleo 2T</label>
+        <div class="field"><select id="percent">
+          <option value="1">1%</option><option value="1.5">1,5%</option><option value="2">2%</option>
+          <option value="2.25">2,25%</option><option value="2.5" selected>2,5%</option>
+          <option value="2.75">2,75%</option><option value="3">3%</option><option value="3.5">3,5%</option><option value="4">4%</option>
+        </select></div>
+      </div>
+    </div>
+    <div class="presets" aria-label="Quantidades rápidas">
+      <button class="secondary" data-litres="1">1 L</button>
+      <button class="secondary" data-litres="2">2 L</button>
+      <button class="secondary" data-litres="5">5 L</button>
+      <button class="secondary" data-litres="10">10 L</button>
+    </div>
+    <div class="result" aria-live="polite">
+      <small>ÓLEO A ADICIONAR</small>
+      <div class="answer" id="oil">50 ml</div>
+      <div class="detail" id="summary">2 litros de gasolina · mistura a 2,5%</div>
+    </div>
+    <button class="primary" id="copy">Copiar resultado</button>
+  </section>
+
+  <section class="card">
+    <h2>Tabela rápida</h2>
+    <table>
+      <thead><tr><th>Gasolina</th><th>2%</th><th>2,25%</th><th>2,5%</th><th>3%</th></tr></thead>
+      <tbody id="table"></tbody>
+    </table>
+    <p class="note">Valores calculados sobre o volume de gasolina: óleo (ml) = gasolina (litros) × 1000 × percentagem ÷ 100.</p>
+  </section>
+  <section class="card">
+    <h2>Instalação e utilização</h2>
+    <p class="note">Depois de instalada no ecrã inicial, a calculadora pode funcionar sem Internet. Para instalar como app, tem de ser aberta a partir de um endereço HTTPS; não é necessária a Play Store.</p>
+  </section>
+  </div>
+
+  <div id="panel-gears" class="panel" role="tabpanel" aria-labelledby="tab-gears" hidden>
+    <section class="card">
+      <h2>Dados do kart</h2>
+      <div class="grid">
+        <div>
+          <label for="rpm">Rotação do motor</label>
+          <div class="field"><input id="rpm" type="number" min="1" step="100" value="12000" inputmode="numeric"><span class="suffix">RPM</span></div>
+        </div>
+        <div>
+          <label for="tyre">Diâmetro do pneu traseiro</label>
+          <div class="field"><input id="tyre" type="number" min="1" step="1" value="280" inputmode="decimal"><span class="suffix">mm</span></div>
+        </div>
+      </div>
+      <p class="note">Mede o diâmetro exterior do pneu montado e insuflado. A velocidade calculada é teórica, sem considerar derrapagem, deformação do pneu ou perdas mecânicas.</p>
+    </section>
+    <section class="card">
+      <h2>Comparar duas relações</h2>
+      <p class="note">Introduz os dentes do pinhão dianteiro e da coroa traseira. Por exemplo, 12:76 significa pinhão de 12 dentes e coroa de 76.</p>
+      <div class="grid">
+        <div>
+          <label for="frontA">Transmissão A — pinhão</label>
+          <div class="field"><input id="frontA" type="number" min="1" step="1" value="12" inputmode="numeric"><span class="suffix">dentes</span></div>
+          <label for="rearA" style="margin-top:12px">Transmissão A — coroa</label>
+          <div class="field"><input id="rearA" type="number" min="1" step="1" value="76" inputmode="numeric"><span class="suffix">dentes</span></div>
+        </div>
+        <div>
+          <label for="frontB">Transmissão B — pinhão</label>
+          <div class="field"><input id="frontB" type="number" min="1" step="1" value="13" inputmode="numeric"><span class="suffix">dentes</span></div>
+          <label for="rearB" style="margin-top:12px">Transmissão B — coroa</label>
+          <div class="field"><input id="rearB" type="number" min="1" step="1" value="79" inputmode="numeric"><span class="suffix">dentes</span></div>
+        </div>
+      </div>
+      <div class="comparison" aria-live="polite">
+        <div class="comparebox">
+          <strong id="labelA">Transmissão A · 12:76</strong>
+          <div class="note">Rotação da roda</div><div class="big-number" id="wheelA">— RPM</div>
+          <div class="note" style="margin-top:8px">Velocidade teórica</div><div class="big-number" id="speedA">— km/h</div>
+        </div>
+        <div class="comparebox">
+          <strong id="labelB">Transmissão B · 13:79</strong>
+          <div class="note">Rotação da roda</div><div class="big-number" id="wheelB">— RPM</div>
+          <div class="note" style="margin-top:8px">Velocidade teórica</div><div class="big-number" id="speedB">— km/h</div>
+        </div>
+      </div>
+      <div class="delta" id="gearSummary" aria-live="polite">Introduz os valores para comparar.</div>
+    </section>
+  </div>
+</main>
+<footer>Mistura 2T · versão 1.1 · funciona no dispositivo</footer>
+<script>
+  const fuel = document.getElementById('fuel');
+  const percent = document.getElementById('percent');
+  const oil = document.getElementById('oil');
+  const summary = document.getElementById('summary');
+  function fmt(n) {
+    return new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 2 }).format(n);
+  }
+  function calculate() {
+    const litres = Number(String(fuel.value).replace(',', '.'));
+    const pct = Number(percent.value);
+    if (!Number.isFinite(litres) || litres <= 0) {
+      oil.textContent = '—';
+      summary.textContent = 'Introduz uma quantidade de gasolina superior a zero.';
+      return null;
+    }
+    const ml = litres * 1000 * pct / 100;
+    oil.textContent = fmt(ml) + ' ml';
+    summary.textContent = fmt(litres) + (litres === 1 ? ' litro' : ' litros') + ' de gasolina · mistura a ' + fmt(pct) + '%';
+    return {litres, pct, ml};
+  }
+  fuel.addEventListener('input', calculate);
+  percent.addEventListener('change', calculate);
+  document.querySelectorAll('[data-litres]').forEach(btn => btn.addEventListener('click', () => { fuel.value = btn.dataset.litres; calculate(); }));
+  document.getElementById('copy').addEventListener('click', async () => {
+    const r = calculate();
+    if (!r) return;
+    const text = `${fmt(r.litres)} L de gasolina a ${fmt(r.pct)}%: adicionar ${fmt(r.ml)} ml de óleo 2T.`;
+    const btn = document.getElementById('copy');
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.textContent = 'Resultado copiado!';
+    } catch {
+      window.prompt('Copia o resultado:', text);
+    }
+    setTimeout(() => btn.textContent = 'Copiar resultado', 1600);
+  });
+  const tbody = document.getElementById('table');
+  [1,2,5,10].forEach(l => {
+    const tr = document.createElement('tr');
+    const cells = [l + ' L', l*20 + ' ml', l*22.5 + ' ml', l*25 + ' ml', l*30 + ' ml'];
+    cells.forEach(c => { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); });
+    tbody.appendChild(tr);
+  });
+  const tabMix = document.getElementById('tab-mix');
+  const tabGears = document.getElementById('tab-gears');
+  const panelMix = document.getElementById('panel-mix');
+  const panelGears = document.getElementById('panel-gears');
+  function showTab(which) {
+    const mix = which === 'mix';
+    panelMix.hidden = !mix;
+    panelGears.hidden = mix;
+    tabMix.classList.toggle('active', mix);
+    tabGears.classList.toggle('active', !mix);
+    tabMix.setAttribute('aria-selected', String(mix));
+    tabGears.setAttribute('aria-selected', String(!mix));
+    if (!mix) calcGears();
+  }
+  tabMix.addEventListener('click', () => showTab('mix'));
+  tabGears.addEventListener('click', () => showTab('gears'));
+
+  const gearInputs = ['rpm','tyre','frontA','rearA','frontB','rearB'];
+  gearInputs.forEach(id => document.getElementById(id).addEventListener('input', calcGears));
+  function calcGears() {
+    const rpm = Number(document.getElementById('rpm').value);
+    const diameterMm = Number(document.getElementById('tyre').value);
+    const fA = Number(document.getElementById('frontA').value);
+    const rA = Number(document.getElementById('rearA').value);
+    const fB = Number(document.getElementById('frontB').value);
+    const rB = Number(document.getElementById('rearB').value);
+    const summaryEl = document.getElementById('gearSummary');
+    if ([rpm,diameterMm,fA,rA,fB,rB].some(n => !Number.isFinite(n) || n <= 0)) {
+      ['wheelA','speedA','wheelB','speedB'].forEach(id => document.getElementById(id).textContent = '—');
+      summaryEl.textContent = 'Preenche todos os campos com valores superiores a zero.';
+      return;
+    }
+    function result(front, rear) {
+      const wheelRpm = rpm * front / rear;
+      const speed = wheelRpm * Math.PI * (diameterMm / 1000) * 60 / 1000;
+      return {wheelRpm, speed};
+    }
+    const a = result(fA,rA), b = result(fB,rB);
+    document.getElementById('labelA').textContent = `Transmissão A · ${fmt(fA)}:${fmt(rA)}`;
+    document.getElementById('labelB').textContent = `Transmissão B · ${fmt(fB)}:${fmt(rB)}`;
+    document.getElementById('wheelA').textContent = fmt(a.wheelRpm) + ' RPM';
+    document.getElementById('wheelB').textContent = fmt(b.wheelRpm) + ' RPM';
+    document.getElementById('speedA').textContent = fmt(a.speed) + ' km/h';
+    document.getElementById('speedB').textContent = fmt(b.speed) + ' km/h';
+    const diff = b.speed - a.speed;
+    const pct = (diff / a.speed) * 100;
+    const faster = Math.abs(diff) < 0.01 ? 'As duas transmissões dão praticamente a mesma velocidade teórica.' :
+      `A transmissão ${diff > 0 ? 'B' : 'A'} dá ${fmt(Math.abs(diff))} km/h ${diff > 0 ? 'mais' : 'menos'} (${fmt(Math.abs(pct))}%) à mesma rotação do motor.`;
+    summaryEl.textContent = faster;
+  }
+  calcGears();
+
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+  }
+  calculate();
+</script>
+</body>
+</html>
